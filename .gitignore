@@ -1,2 +1,4 @@
 *.pyc
+*.res
+*.txt
 __pycache__/
