@@ -31,7 +31,11 @@ PointArray PA_init(int num_nodes) {
  * 
  * @param target PointArray to free memory and destruct.
  */
-void PA_del(PointArray target);
+void PA_del(PointArray target) {
+
+    free(target->points);
+    free(target);
+}
 
 
 /**
@@ -40,7 +44,22 @@ void PA_del(PointArray target);
  * @param num_nodes Indicates how many nodes are there.
  * @return Allocated ConcordeAdjMatrix instance. 
  */
-ConcordeAdjMatrix ADM_init(int num_nodes);
+ConcordeAdjMatrix ADM_init(int num_nodes) {
+
+    ConcordeAdjMatrix ret = (ConcordeAdjMatrix)malloc(sizeof(_ConcordeAdjMatrix));
+    
+    ret->num = num_nodes;
+
+    ret->matrix = (double **)malloc(sizeof(double *) * num_nodes);
+
+    for(int i=0; i<num_nodes; i++) {
+        ret->matrix[i] = (double *)malloc(sizeof(double) * num_nodes);
+        // -1.0 Indicates null.
+        for(int j=0; j<num_nodes; j++) ret->matrix[i][j] = -1.0;
+    }
+
+    return ret;
+}
 
 
 /**
@@ -48,7 +67,14 @@ ConcordeAdjMatrix ADM_init(int num_nodes);
  * 
  * @param target Adjacent matrix pointer to free memory and destruct.
  */
-void ADM_del(ConcordeAdjMatrix target);
+void ADM_del(ConcordeAdjMatrix target) {
+
+    for(int i=0; i<target->num; i++) {
+        free(target->matrix[i]);
+    }
+    free(target->matrix);
+    free(target);
+}
 
 
 /**
@@ -57,7 +83,17 @@ void ADM_del(ConcordeAdjMatrix target);
  * @param num_nodes Indicates how many nodes are there.
  * @return Allocated ConcordeContainer instance. 
  */
-ConcordeContainer Concorde_init(int num_nodes);
+ConcordeContainer Concorde_init(int num_nodes) {
+
+    ConcordeContainer ret = (ConcordeContainer)malloc(sizeof(_ConcordeContainer));
+
+    ret->adm = ADM_init(num_nodes);
+    ret->parr = PA_init(num_nodes);
+    ret->answer = (int *)malloc(sizeof(int) * (num_nodes + 1));
+    ret->num = num_nodes;
+
+    return ret;
+}
 
 
 /**
@@ -65,7 +101,13 @@ ConcordeContainer Concorde_init(int num_nodes);
  * 
  * @param target Container pointer to free memory and desturct.
  */
-void Concorde_del(ConcordeContainer target);
+void Concorde_del(ConcordeContainer target) {
+
+    ADM_del(target->adm);
+    PA_del(target->parr);
+    free(target->answer);
+    free(target);
+}
 
 /**
  * @brief TSP solver

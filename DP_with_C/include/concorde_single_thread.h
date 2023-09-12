@@ -36,7 +36,7 @@ typedef _ConcordeAdjMatrix *ConcordeAdjMatrix;
 typedef struct __concorde_container {
 
     PointArray parr;
-    ConcordeAdjMatrix adj;
+    ConcordeAdjMatrix adm;
     
     char buffer[1024];
     int fd;
