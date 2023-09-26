@@ -1,4 +1,15 @@
+/**
+ * @file concorde_single_thread.h
+ * @author Chan-young Lee (ckckdud3@gmail.com)
+ * @brief TSP solver with dynamic programming (single-threaded version)
+ * @version 1.0
+ * @date 13 Sep 2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include <stdlib.h>
+#include <math.h>
 
 #include "concorde_single_thread.h"
 
@@ -89,7 +100,11 @@ ConcordeContainer Concorde_init(int num_nodes) {
 
     ret->adm = ADM_init(num_nodes);
     ret->parr = PA_init(num_nodes);
+
+    ret->ground_truth = (int *)malloc(sizeof(int) * (num_nodes + 1));
     ret->answer = (int *)malloc(sizeof(int) * (num_nodes + 1));
+    ret->memo = (double *)malloc(sizeof(double) * (int)(pow(2.0, (double)(num_nodes-1))));
+
     ret->num = num_nodes;
 
     return ret;
@@ -105,6 +120,7 @@ void Concorde_del(ConcordeContainer target) {
 
     ADM_del(target->adm);
     PA_del(target->parr);
+    free(target->ground_truth);
     free(target->answer);
     free(target);
 }
@@ -112,10 +128,12 @@ void Concorde_del(ConcordeContainer target) {
 /**
  * @brief TSP solver
  * 
- * @param container  Container pointer which will solve TSP
+ * @param container  Container pointer which will solve TSP with dynamic programming
  * @param file_name  File path to the data
  */
-void TSP_solve(ConcordeContainer container, char *file_name);
+void TSP_solve_DP(ConcordeContainer container, char *file_name) {
+    
+}
 
 
 /**
@@ -123,4 +141,6 @@ void TSP_solve(ConcordeContainer container, char *file_name);
  * 
  * @param container Container pointer which will solve TSP
  */
-void TSP_solve_internal(ConcordeContainer container);
+void TSP_solve_DP_internal(ConcordeContainer container, int depth) {
+    
+}

@@ -1,3 +1,13 @@
+/**
+ * @file concorde_single_thread.h
+ * @author Chan-young Lee (ckckdud3@gmail.com)
+ * @brief TSP solver with dynamic programming (single-threaded version)
+ * @version 1.0
+ * @date 13 Sep 2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #ifndef __CONCORDE_GRAPH__
 #define __CONCORDE_GRAPH__
 
@@ -41,7 +51,12 @@ typedef struct __concorde_container {
     char buffer[1024];
     int fd;
     int num;
+    double ground_truth_dist;
+    double answer_dist;
+    
+    int *ground_truth;
     int *answer;
+    double *memo;
 
 } _ConcordeContainer;
 
@@ -105,10 +120,10 @@ void Concorde_del(ConcordeContainer target);
 /**
  * @brief TSP solver
  * 
- * @param container  Container pointer which will solve TSP
+ * @param container  Container pointer which will solve TSP with dynamic programming
  * @param file_name  File path to the data
  */
-void TSP_solve(ConcordeContainer container, char *file_name);
+void TSP_solve_DP(ConcordeContainer container, char *file_name);
 
 
 /**
@@ -116,6 +131,6 @@ void TSP_solve(ConcordeContainer container, char *file_name);
  * 
  * @param container Container pointer which will solve TSP
  */
-void TSP_solve_internal(ConcordeContainer container);
+void TSP_solve_DP_internal(ConcordeContainer container, int depth);
 
 #endif
