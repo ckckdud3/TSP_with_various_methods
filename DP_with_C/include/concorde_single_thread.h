@@ -1,6 +1,6 @@
 /**
  * @file concorde_single_thread.h
- * @author Chan-young Lee (ckckdud3@gmail.com)
+ * @author Chan-young Lee (ckckdud123@gmail.com)
  * @brief TSP solver with dynamic programming (single-threaded version)
  * @version 1.0
  * @date 13 Sep 2023
@@ -53,7 +53,7 @@ typedef struct __concorde_container {
     int num;
     double ground_truth_dist;
     double answer_dist;
-    
+
     int *ground_truth;
     int *answer;
     double *memo;
@@ -130,7 +130,10 @@ void TSP_solve_DP(ConcordeContainer container, char *file_name);
  * @brief Internal solver with dynamic programming
  * 
  * @param container Container pointer which will solve TSP
+ * @param depth Indicates current depth of subproblem
+ * @param index Indicates currently solving index
+ * @param mask Indicates visited nodes
  */
-void TSP_solve_DP_internal(ConcordeContainer container, int depth);
+double TSP_solve_DP_internal(ConcordeContainer container, int depth, int index, int mask);
 
 #endif

@@ -1,6 +1,6 @@
 /**
  * @file concorde_single_thread.h
- * @author Chan-young Lee (ckckdud3@gmail.com)
+ * @author Chan-young Lee (ckckdud123@gmail.com)
  * @brief TSP solver with dynamic programming (single-threaded version)
  * @version 1.0
  * @date 13 Sep 2023
@@ -103,7 +103,11 @@ ConcordeContainer Concorde_init(int num_nodes) {
 
     ret->ground_truth = (int *)malloc(sizeof(int) * (num_nodes + 1));
     ret->answer = (int *)malloc(sizeof(int) * (num_nodes + 1));
-    ret->memo = (double *)malloc(sizeof(double) * (int)(pow(2.0, (double)(num_nodes-1))));
+
+    ret->memo = (double *)malloc(sizeof(double) * (int)((num_nodes-1) * pow(2.0, (double)(num_nodes-1))));
+    for(int i=0; i<(int)((num_nodes-1) * pow(2.0, (double)(num_nodes-1))); i++) {
+        ret->memo[i] = -1.0;
+    }
 
     ret->num = num_nodes;
 
@@ -140,7 +144,15 @@ void TSP_solve_DP(ConcordeContainer container, char *file_name) {
  * @brief Internal solver with dynamic programming
  * 
  * @param container Container pointer which will solve TSP
+ * @param depth Indicates current depth of subproblem
+ * @param index Indicates currently solving index
+ * @param mask Indicates visited nodes
  */
-void TSP_solve_DP_internal(ConcordeContainer container, int depth) {
+double TSP_solve_DP_internal(ConcordeContainer container, int depth, int index, int mask) {
+    
+    if(depth == 2) {
+        return container->adm->matrix[0][index];
+    }
+
     
 }
