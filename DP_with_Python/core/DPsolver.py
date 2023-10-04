@@ -1,6 +1,5 @@
 import numpy as np
 from .utils import samplereader, case
-
 import logging
 
 logger = logging.getLogger(name=__name__)
@@ -8,9 +7,17 @@ logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(name)s : %(message)s')
 
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+
+file_handler = logging.FileHandler('DPsolver.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
 INF = 1e10
 
-class solver:
+class DPsolver:
     
   def __init__(self, num_nodes, file_name):
         
@@ -20,6 +27,8 @@ class solver:
     self.adm = None
     self.memo = None
     self.answer = None
+
+    self.ground_truth = None
 
     self.reader = samplereader(self.num_nodes, self.file_name)
 
@@ -37,6 +46,15 @@ class solver:
         adm[i][j] = dist
         adm[j][i] = dist
     
+    self.ground_truth = {}
+    self.ground_truth['path'] = [1] + data.answer
+
+    gt_dist = 0.0
+    for i in range(self.num_nodes):
+      gt_dist += adm[data.answer[i%self.num_nodes]-1][data.answer[(i+1)%self.num_nodes]-1]
+    
+    self.ground_truth['dist'] = gt_dist
+
     return adm
 
   def __process_internal(self, pos, visited):
@@ -58,10 +76,13 @@ class solver:
   def __append_path(self, pos, visited):
 
     if pos == 0:
-      self.answer[0].append(pos + 1)
+      self.answer['path'].append(pos + 1)
     else:
-      self.answer[0].append(pos + 1)
+      self.answer['path'].append(pos + 1)
 
+    if visited == (1 << self.num_nodes) - 1:
+      return
+    
     next = [INF, 0]
     for i in range(self.num_nodes):
       if visited & (1 << i):
@@ -74,22 +95,31 @@ class solver:
 
   def process(self):
     
+    count = 0
+    correct = 0
+    logger.info(f'Process started.')
     while True:
       data = self.reader.read_one()
 
       if data is not None:
         self.adm = self.__convert_to_adm(data=data)
         self.memo = [[INF] * (1 << self.num_nodes) for _ in range(self.num_nodes)]
-        self.answer = [[], 0.0]
+        self.answer = {}
+        self.answer['path'] = []
 
-        self.answer[1] = self.__process_internal(0, 1)
+        self.answer['dist'] = self.__process_internal(0, 1)
         self.__append_path(0, 1)
-        self.answer += ' 1'
-
+        self.answer['path'].append(1)
+        print(f'Solver\'s answer : {self.answer}, Ground truth : {self.ground_truth}, Distance ratio : {(self.answer["dist"]/self.ground_truth["dist"]):.4f}')
+        if self.answer['path'] == self.ground_truth['path'] or self.answer['path'][::-1] == self.ground_truth['path']:
+          correct += 1
+        elif (self.answer["dist"]/self.ground_truth["dist"]) < 1:
+          correct += 1
+        count += 1
       else:
         break
 
-    logger.info(f'Processing of file \'{self.file_name}\' finished')
+    logger.info(f'Processing of file \'{self.file_name}\' finished. Processed {count} cases. Accuracy = {(correct/count):.4f}')
     return
     
 

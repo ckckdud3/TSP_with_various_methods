@@ -8,6 +8,15 @@ logger.setLevel(logging.INFO)
 
 formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(name)s : %(message)s')
 
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+
+file_handler = logging.FileHandler('DPsolver.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+
 @dataclass
 class case:
   nodes: List[List[float]]
@@ -23,6 +32,7 @@ class samplereader:
     self.f = None
     try:
       self.f = open(self.file_name, 'r')
+      logger.info(f'File \'{self.file_name}\' opened. Number of nodes : {self.num_nodes}')
     except:
       raise ValueError('Invalid file name')
 
@@ -32,13 +42,15 @@ class samplereader:
       logger.info('File closed')
       return None
     
-    line = self.f.readline().split(' ')
+    line = self.f.readline()
 
     if not line:
       self.f.close()
       logger.info('EOF reached')
       return None
     
+    line = line.split(' ')
+
     nodes = []
     answer = []
 
