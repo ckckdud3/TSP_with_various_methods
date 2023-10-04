@@ -114,6 +114,7 @@ class DPsolver:
         if self.answer['path'] == self.ground_truth['path'] or self.answer['path'][::-1] == self.ground_truth['path']:
           correct += 1
         elif (self.answer["dist"]/self.ground_truth["dist"]) < 1:
+          logger.info(f'Non-optimal ground truth detected at line {count+1}')
           correct += 1
         count += 1
       else:
