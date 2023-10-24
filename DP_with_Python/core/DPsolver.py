@@ -42,7 +42,7 @@ class DPsolver:
     
     for i in range(self.num_nodes):
       for j in range(i+1, self.num_nodes):
-        dist = ((points[i] - points[j])**2).sum()**0.5
+        dist = ((points[i]*1000.0 - points[j]*1000.0)**2).sum()**0.5
         adm[i][j] = dist
         adm[j][i] = dist
     

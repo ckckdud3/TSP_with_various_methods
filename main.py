@@ -1,4 +1,12 @@
+import argparse
 from DP_with_Python.core.DPsolver import DPsolver
 
-a = DPsolver(10, './DP_with_Python/concorde/tsp10_concorde.txt')
+parser = argparse.ArgumentParser(description='Concorde TSP solver with Dynamic Programming')
+
+parser.add_argument('filename', type=str, help='Testcase file path.')
+parser.add_argument('num_nodes', type=int, help='Number of nodes per graph.')
+
+args = parser.parse_args()
+
+a = DPsolver(args.num_nodes, args.filename)
 a.process()
