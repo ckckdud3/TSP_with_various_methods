@@ -97,6 +97,7 @@ class DPsolver:
     
     count = 0
     correct = 0
+    opt_gap = 0.0
     logger.info(f'Process started.')
     while True:
       data = self.reader.read_one()
@@ -110,17 +111,22 @@ class DPsolver:
         self.answer['dist'] = self.__process_internal(0, 1)
         self.__append_path(0, 1)
         self.answer['path'].append(1)
-        print(f'Solver\'s answer : {self.answer}, Ground truth : {self.ground_truth}, Distance ratio : {(self.answer["dist"]/self.ground_truth["dist"]):.4f}')
+
+        tmp_opt_gap = self.answer['dist']/self.ground_truth['dist'] - 1
+
         if self.answer['path'] == self.ground_truth['path'] or self.answer['path'][::-1] == self.ground_truth['path']:
-          correct += 1
+          tmp_opt_gap = 0.
         elif (self.answer["dist"]/self.ground_truth["dist"]) < 1:
           logger.info(f'Non-optimal ground truth detected at line {count+1}')
-          correct += 1
+        print(f'[Line {count+1}] Solver\'s answer : {self.answer}, Ground truth : {self.ground_truth}, Opt gap : {(tmp_opt_gap):.4f}')
+
         count += 1
+        opt_gap += tmp_opt_gap
+
       else:
         break
 
-    logger.info(f'Processing of file \'{self.file_name}\' finished. Processed {count} cases. Accuracy = {(correct/count):.4f}')
+    logger.info(f'Processing of file \'{self.file_name}\' finished. Processed {count} cases. Opt gap = {(opt_gap/count):.8f}')
     return
     
 

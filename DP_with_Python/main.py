@@ -1,5 +1,5 @@
 import argparse
-from DP_with_Python.core.DPsolver import DPsolver
+from core.DPsolver import DPsolver
 
 parser = argparse.ArgumentParser(description='Concorde TSP solver with Dynamic Programming')
 
